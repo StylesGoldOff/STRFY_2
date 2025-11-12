@@ -31,266 +31,415 @@
     </style>
 
 </head>
-<body class="bg-light">
-    <div class="container py-5">
-        <div class="text-center mb-4">
-            <h1 class="display-4 text-primary mb-3 pb-4 fw-bold">Stratify</h1>
-            <button type="button" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#productoModal">
-                Añadir nuevo servicio
+<body class="bg-light d-flex flex-column min-vh-100">
+    <!-- Responsive black navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-black">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Mis Productos</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
-            <button id="clearAll" class="btn btn-danger text-dark btn-lg ms-2">
-                Limpiar todo (LocalStorage)
-            </button>
-        </div>
-        <!--Contenedor para mostrar los productos-->
-        <div id="productosContainer" class="row g-4"></div>
-    </div>
-    <!--Modal: Formulario-->
-    <div class="modal fade" id="productoModal" tabindex="-1" aria-labelledby="productoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="productoModalLabel">Registro de Nuevo Servicio</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4 bg-dark text-white" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(fondo.png);background-size: cover; background-position: center; background-repeat: no-repeat;">
-                    <form id="productoForm">
-                        <div class="row g-3">
 
-                            <div class="col-md-6">
-                                <label for="claveProducto" class="form-label">Clave*</label>
-                                <input type="text" class="form-control" id="claveProducto" placeholder="Clave de producto" required>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label for="nombreProducto" class="form-label">Nombre del servicio*</label>
-                                <input type="text" class="form-control" id="nombreProducto" placeholder="Ej: Fondo de WindowsXP" required>
-                            </div>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Acerca</a></li>
+                </ul>
 
-                            <div class="col-md-6">
-                                <label for="estadoProducto" class="form-label">Categoria*</label>
-                                <select class="form-select" id="estadoProducto" required>
-                                    <option value="">Seleccionar categoria</option>
-                                    <option value="podcast">Podcast</option>
-                                    <option value="publicidad">Publicidad-Digital</option>
-                                    <option value="sitios">Sitios-web</option>
-                                    <option value="auto">Automatizacion</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="precio" class="form-label">Precio*</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="precio" placeholder="0.00" step="0.01" required>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <label for="Inversion" class="form-label">Inversion minima*</label>
-                                <input type="number" class="form-control" id="stock" placeholder="Ej: 1000" required>
-                            </div>
-
-                            <div class="col-12">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <textarea class="form-control" id="descripcion" rows="3" placeholder="Describe el servicio..."></textarea>
-                            </div>
-                            <!--MODIFICACION: SUBIR una o varias imagenes-->
-                            <div class="col-12">
-                                <label for="imagenes" class="form-label">Imágenes (puedes subir una o varias)</label>
-                                <input type="file" id="imagenes" class="form-control" accept="image/*" multiple />
-                                <div class="form-text text-white">Se guardan de forma temporal como Data URLs en el LocalStorage (límite aproximado total 5-10 MB por sitio).</div>
-                            </div>
-                        </div>
-                    </form>
-                </div> 
-                <div class="modal-footer bg-dark">
-                    <button type="button" class="btn btn-secondary text-dark" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="productoForm" class="btn btn-info">Guardar Servicio</button>
+                <!-- Theme switch -->
+                <div class="d-flex align-items-center">
+                    <div class="form-check form-switch text-white me-2">
+                        <input class="form-check-input" type="checkbox" id="themeSwitch" aria-label="Toggle theme">
+                        <label class="form-check-label" for="themeSwitch" id="themeLabel">Claro</label>
+                    </div>
                 </div>
             </div>
         </div>
-    </div> 
+    </nav>
+
+    <div class="container py-5">
+        <div class="text-center mb-4">
+            <h1 class="display-4 text-primary mb-3">Gestión de Productos</h1>
+            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#registroModal">
+                Nuevo Producto
+            </button>
+            <!--Boton para limpiar registros-->
+            <button id="clearProjects" class="btn btn-outline-danger btn-lg ms-2">
+                Limpiar Productos
+            </button>
+        </div>
+
+        <div id="projectsContainer" class="row mt-4"></div>
+        <!-- Modal -->
+        <!--Creacion de un modal para mostrar formulario-->
+        <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="registroModalLabel">Registrar Nuevo Producto</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-4">
+                        <form id="projectForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="productName" class="form-label">Nombre del producto</label>
+                                    <input type="text" class="form-control" id="productName" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="productKey" class="form-label">Clave</label>
+                                    <input type="text" class="form-control" id="productKey" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="price" class="form-label">Precio</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="price" placeholder="0.00" step="0.01" min="0" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="stock" class="form-label">Stock</label>
+                                    <input type="number" class="form-control" id="stock" placeholder="0" step="1" min="0" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="productDescription" class="form-label">Descripción del producto</label>
+                                    <textarea class="form-control" id="productDescription" rows="4" required></textarea>
+                                </div>
+
+                                <!--Añadir imagenes al formulario-->
+                                <div class="col-12">
+                                    <label for="projectImages" class="form-label">Imágenes del Producto</label>
+                                    <input type="file" class="form-control" id="projectImages" accept="image/*" multiple>
+                                    <div class="form-text">Se guardan de forma temporal como Data URLs en el LocalStorage (límite aprox. 10-50MB por sitio).</div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" form="projectForm" class="btn btn-primary">Guardar Producto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Responsive Footer (contiene los mismos apartados de la barra de navegación) -->
+    <footer class="site-footer mt-auto py-4">
+        <div class="container">
+            <div class="row gy-3">
+                <div class="col-12 col-md-4 d-flex align-items-center">
+                    <a class="navbar-brand text-white fw-bold me-2" href="#">Mis Productos</a>
+                    <span class="text-muted small d-none d-md-inline">• Gestión y almacenamiento local</span>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <h6 class="text-uppercase small mb-2">Navegación</h6>
+                    <ul class="list-unstyled d-flex flex-column flex-sm-row gap-2 mb-0">
+                        <li><a href="#" class="small">Inicio</a></li>
+                        <li><a href="#" class="small">Productos</a></li>
+                        <li><a href="#" class="small">Acerca</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-12 col-md-4 text-md-end">
+                    <h6 class="text-uppercase small mb-2 d-none d-md-block">Tema</h6>
+                    <!-- Mostrar estado actual del tema (no duplicar el switch) -->
+                    <div class="small">
+                        <i class="bi bi-sun me-1"></i>
+                        <span id="footerThemeLabel">Claro</span>
+                    </div>
+                    <div class="mt-2 small text-muted">© <span id="currentYear"></span> Mis Productos</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        let productos = [];
-        
-        const LS_KEY = 'productos';
+        const LS_KEY = 'proyectos';
+        const THEME_KEY = 'site-theme'; // 'light'|'dark'
+        let proyectos = [];
 
-        const modal = new bootstrap.Modal(document.getElementById('productoModal'));
+        // Inicializar modal de bootstrap
+        const registroModal = new bootstrap.Modal(document.getElementById('registroModal'));
 
-        function saveToLS() {
-            localStorage.setItem(LS_KEY, JSON.stringify(productos));
+        // Theme helpers
+        function applyTheme(theme) {
+            const root = document.documentElement;
+            const body = document.body;
+            if (theme === 'dark') {
+                root.setAttribute('data-bs-theme', 'dark');
+                body.classList.remove('bg-light');
+                body.classList.add('bg-dark', 'text-light');
+                document.getElementById('themeSwitch').checked = true;
+                document.getElementById('themeLabel').textContent = 'Oscuro';
+                const ft = document.getElementById('footerThemeLabel'); if (ft) ft.textContent = 'Oscuro';
+                // change footer icon
+                const icon = document.querySelector('.site-footer i');
+                if (icon) { icon.className = 'bi bi-moon-fill me-1'; }
+            } else {
+                root.setAttribute('data-bs-theme', 'light');
+                body.classList.remove('bg-dark', 'text-light');
+                body.classList.add('bg-light');
+                document.getElementById('themeSwitch').checked = false;
+                document.getElementById('themeLabel').textContent = 'Claro';
+                const ft = document.getElementById('footerThemeLabel'); if (ft) ft.textContent = 'Claro';
+                const icon = document.querySelector('.site-footer i');
+                if (icon) { icon.className = 'bi bi-sun me-1'; }
+            }
+            try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* ignore */ }
         }
 
-        function loadFromLS() {
+        // Theme toggle element
+        const themeSwitch = document.getElementById('themeSwitch');
+        if (themeSwitch) {
+            themeSwitch.addEventListener('change', () => {
+                applyTheme(themeSwitch.checked ? 'dark' : 'light');
+            });
+        }
+
+        // Load saved theme on start
+        document.addEventListener('DOMContentLoaded', () => {
             try {
-                const raw = localStorage.getItem(LS_KEY);
-                productos = raw ? JSON.parse(raw) : [];
+                const saved = localStorage.getItem(THEME_KEY) || 'light';
+                applyTheme(saved);
             } catch (e) {
-                console.warn('LocalStorage corrupto, se reinicia.', e);
-                productos = [];
+                applyTheme('light');
+            }
+
+            loadFromLS();
+            renderProjects();
+
+            // footer year
+            const yearEl = document.getElementById('currentYear');
+            if (yearEl) yearEl.textContent = new Date().getFullYear();
+        });
+
+        //guardar datos en el LocalStorage
+                function saveToLS(){
+                    try {
+                        localStorage.setItem(LS_KEY, JSON.stringify(proyectos));
+                        return true;
+                    } catch (e) {
+                        console.warn('Error saving to LocalStorage, attempting to free space', e);
+                        // Try removing image data (Data URLs) to reduce size and save again
+                        const trimmed = proyectos.map(p => {
+                            const copy = Object.assign({}, p);
+                            if (copy.imagenes && copy.imagenes.length) {
+                                copy._hadImages = true;
+                                copy.imagenes = [];
+                            }
+                            return copy;
+                        });
+                        try {
+                            localStorage.setItem(LS_KEY, JSON.stringify(trimmed));
+                            proyectos = trimmed;
+                            showToast('Se eliminaron las imágenes para ahorrar espacio en LocalStorage', 'warning');
+                            return true;
+                        } catch (e2) {
+                            console.error('Fallback save also failed', e2);
+                            try {
+                                localStorage.removeItem(LS_KEY);
+                            } catch (_) {}
+                            showToast('No se pudo guardar: almacenamiento lleno', 'danger');
+                            return false;
+                        }
+                    }
+                }
+        //Cargar los proyectos del LocalStorage
+        function loadFromLS(){
+            try{
+                const raw = localStorage.getItem(LS_KEY);
+                proyectos = raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                console.warn('LocalStorage corrupto, se reinicia', e);
+                proyectos = [];
                 localStorage.removeItem(LS_KEY);
             }
         }
 
+        //Formatear numero a moneda MXN
         function currencyMX(n) {
-            return Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return Number(n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        function readFilesAsDataURLs(filelist) {
-            const files = Array.from(filelist || []);
-            const readers = files.map(
-                (file) => 
-                    new Promise((resolve, reject) => {
-                        const fr = new FileReader();
-                        fr.onload = () => resolve({ name: file.name, type: file.type, dataURL: fr.result });
-                        fr.onerror = reject;
-                        fr.readAsDataURL(file);
-                    })
-            );
+        //Leer multiples imagenes y convertirlas a Data URLs
+        function readImagesAsDataURLs(fileList) {
+            const files = Array.from(fileList || []);
+            const readers = files.map(file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve({name: file.name, type: file.type, dataURL: reader.result});
+                reader.onerror = () => reject(new Error('File read error'));
+                reader.readAsDataURL(file);
+            }));
             return Promise.all(readers);
         }
 
-        function renderProjects() {
-            const container = document.getElementById('productosContainer');
-            container.innerHTML = '';
+        //render de tarjetas de productos
+        function renderProjects(){
+            const projectsContainer = document.getElementById('projectsContainer');
+            projectsContainer.innerHTML = '';
 
-            const estadoClasses = {
-                podcast: 'info',
-                'publicidad': 'primary',
-                'sitios': 'warning',
-                auto: 'success'
+            const estadoClaseMap = {
+                "En Progreso": "bg-info text-white",
+                "Completado": "bg-success text-white",
+                "En Espera": "bg-warning text-dark",
+                "Cancelado": "bg-danger text-white"
             };
 
-            const estadoTexto = {
-                podcast: 'Podcast',
-                'publicidad': 'Publicidad-Digital',
-                'sitios': 'Sitios-web',
-                auto: 'Automatizacion'
+            const estadoTextoMap = {
+                "En Progreso": "En Progreso",
+                "Completado": "Completado",
+                "En Espera": "En Espera",
+                "Cancelado": "Cancelado"
             };
 
-            // Recorrer y crear tarjetas por producto
-            productos.forEach((producto, idx) => {
+            //Recorrer y crear tarjetas
+            proyectos.forEach((proyecto, idx) => {
                 const col = document.createElement('div');
                 col.className = 'col-md-6 col-lg-4 mb-4';
 
-                const thumbs = (producto.imagenes || []).slice(0, 3) 
-                .map((img) => `<img class="thumb w-100" src="${img.dataURL}" alt="${producto.nombre}" />`)
-                .join('');
-                
-                const extraCount = (producto.imagenes?.length || 0) - 3;
-                const extraBadge = extraCount > 0 ? `<span class="badge bg-secondary">+${extraCount} más</span>` : '';
+                const thumbs = (proyecto.imagenes || []).slice(0, 3).map(img => `
+                    <img src="${img.dataURL}" alt="${proyecto.nombre && proyecto.nombre.trim() ? proyecto.nombre : 'Imagen de producto'}" class="thumb w-100 mb-1">
+                `).join('');
+                const extraCount = Math.max(0, (proyecto.imagenes ? proyecto.imagenes.length : 0) - 3);
+                const extraBadge = extraCount > 0 ? `<span class="badge bg-secondary ms-2">+${extraCount} más</span>` : '';
 
                 col.innerHTML = `
                     <div class="card h-100 shadow-sm">
-                        <div class="card-header bg-${estadoClasses[producto.estado]} text-white d-flex align-items-center justify-content-between">
-                            <h5 class="card-title mb-0">${producto.nombre}</h5>
-                            <button class="btn btn-sm btn-light" data-action="delete" data-index="${idx}" title="Eliminar">
+                        <div class="card-header ${estadoClaseMap[proyecto.estado] || ''} d-flex align-items-center justify-content-between">
+                            <h5 class="card-title mb-0">${proyecto.nombre || ''}</h5>
+                            <button class="btn btn-sm btn-light" data-action="delete" data-index="${idx}" title="Eliminar Producto">
                                 <i class="bi bi-trash3"></i>
                             </button>
                         </div>
                         <div class="card-body">
-                            <p class="card-text mb-2">
-                                <strong>Clave:</strong> ${producto.clave}<br />
-                                <strong>Stock:</strong> ${producto.stock}<br />
-                                <strong>Precio:</strong> $${currencyMX(producto.precio)}<br />
+                            <p class="card-text">
+                                <strong>Cliente:</strong> ${proyecto.cliente || ''}<br>
+                                <strong>Responsable:</strong> ${proyecto.responsable || ''}<br>
+                                <strong>Fecha de Inicio:</strong> ${proyecto.fechaInicio ? new Date(proyecto.fechaInicio).toLocaleDateString('es-MX') : ''}<br>
+                                <strong>Fecha estimada de Fin:</strong> ${proyecto.fechaFin ? new Date(proyecto.fechaFin).toLocaleDateString('es-MX') : ''}<br>
+                                <strong>Presupuesto:</strong> $${currencyMX(proyecto.presupuesto)}<br>
                             </p>
-                            
-                            ${producto.descripcion ? `<p class="card-text text-muted"><small>${producto.descripcion}</small></p>` : ''}
-                            ${producto.imagenes && producto.imagenes.length
-                                ? `<div class="thumbs-grid mt-2">${thumbs}</div>${extraBadge ? `<div class="mt-2">${extraBadge}</div> ` : ''} `
-                                : '<div class="text-muted"><em>Sin imágenes</em></div>'}
+                            ${proyecto.descripcion ? `<p class="card-text text-muted"><small>${proyecto.descripcion}</small></p>` : ''}
+                            ${proyecto.imagenes && proyecto.imagenes.length > 0 ? `<div class="thumb-grid mt-2">${thumbs}</div>${extraBadge}` : '<div class="text-muted"><em>No hay imágenes</em></div>'}
                         </div>
                         <div class="card-footer">
-                            <span class="badge bg-${estadoClasses[producto.estado]} w-100">${estadoTexto[producto.estado]}</span>
+                            <span class="${estadoClaseMap[proyecto.estado] || ''} w-100 d-block text-center">
+                                ${estadoTextoMap[proyecto.estado] || ''}
+                            </span>
                         </div>
-                    </div>`;
+                    </div>
+                `;
+                projectsContainer.appendChild(col);
 
-                container.appendChild(col);
-            });
-
-            container.querySelectorAll('[data-action="delete"]').forEach((btn) => {
-                btn.addEventListener('click', (e) => {
-                    const i = Number(e.currentTarget.getAttribute('data-index'));
-                    productos.splice(i, 1);
-                    saveToLS();
-                    renderProjects();
-                });
-            });
-        }
-
-        function showToast(msg, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = 'toast align-items-center text-bg-' + (type === 'success' ? 'success' : 'danger') + ' position-fixed top-0 end-0 m-3';
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">${msg}</div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>`;
-            document.body.appendChild(toast);
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-            setTimeout (() => toast.remove(), 3500);
-        }
-
-        document.getElementById('productoForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const imagenesInput = document.getElementById('imagenes');
-            let imagenes = [];
-            try {
-                imagenes = await readFilesAsDataURLs(imagenesInput.files);
-            } catch (err) {
-                console.error('Error leyendo imágenes', err);
-                showToast('Hubo un problema leyendo las imágenes', 'error');
-            }
-
-            const producto = {
-                id: crypto.randomUUID(),
-                nombre: document.getElementById('nombreProducto').value.trim(),
-                clave: document.getElementById('claveProducto').value.trim(),
-                precio: parseFloat(document.getElementById('precio').value),
-                estado: document.getElementById('estadoProducto').value,
-                stock: document.getElementById('stock').value.trim(),
-                descripcion: document.getElementById('descripcion').value.trim(),
-                imagenes,
-            };
-
-            productos.push(producto);
-            saveToLS();
-            renderProjects();
-
-            // limpiar y cerrar
-            this.reset();
-            modal.hide();
-            showToast('Descargable guardado correctamente');
-        });
-
-
-        // cargar al iniciar
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFromLS();
-            renderProjects();
-
-            // Evento: Limpiar todo el LocalStorage
-            document.getElementById('clearAll').addEventListener('click', () => {
-                if (confirm('¿Seguro que deseas borrar todos los descargables guardados en este navegador?')) {
-                    productos = [];
-                    saveToLS();
-                    renderProjects();
-
-                    showToast('LocalStorage limpiado');
+                // Attach delete handler for this card
+                const deleteBtn = col.querySelector('button[data-action="delete"]');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => {
+                        if (!confirm('¿Eliminar este producto?')) return;
+                        proyectos.splice(idx, 1);
+                        saveToLS();
+                        renderProjects();
+                        showToast('Producto eliminado', 'warning');
+                    });
                 }
             });
-        });
-    </script>
+        }
 
-    <button id="btnInstall" hidden>Instalar app</button>
+        //toast helper (crea contenedor si no existe)
+        function showToast(message, type = 'info') {
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.style.position = 'fixed';
+                toastContainer.style.right = '16px';
+                toastContainer.style.bottom = '16px';
+                toastContainer.style.zIndex = 99999;
+                document.body.appendChild(toastContainer);
+            }
+            const toastEl = document.createElement('div');
+            toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+            toastEl.setAttribute('role', 'alert');
+            toastEl.setAttribute('aria-live', 'assertive');
+            toastEl.setAttribute('aria-atomic', 'true');
+            toastEl.innerHTML = `<div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>`;
+            toastContainer.appendChild(toastEl);
+            const bsToast = new bootstrap.Toast(toastEl, { delay: 4000 });
+            bsToast.show();
+            toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+        }
+
+        // attach form submit handler (separated from showToast)
+        const projectFormEl = document.getElementById('projectForm');
+        if (projectFormEl) {
+            projectFormEl.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const imagenesInput = document.getElementById('projectImages');
+                let imagenes = [];
+                if (imagenesInput && imagenesInput.files && imagenesInput.files.length) {
+                    try {
+                        imagenes = await readImagesAsDataURLs(imagenesInput.files);
+                    } catch (error) {
+                        console.error('Error al leer las imágenes:', error);
+                        showToast('Error al leer las imágenes. Se guardará sin imágenes.', 'warning');
+                        imagenes = [];
+                    }
+                }
+
+                const proyecto = {
+                    id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                    ),
+                    nombre: document.getElementById('productName') ? document.getElementById('productName').value.trim() : '',
+                    fechaInicio: '',
+                    fechaFin: '',
+                    presupuesto: parseFloat(document.getElementById('price') ? document.getElementById('price').value : 0) || 0,
+                    estado: 'En Progreso',
+                    descripcion: document.getElementById('productDescription') ? document.getElementById('productDescription').value.trim() : '',
+                    imagenes: imagenes
+                };
+
+                proyectos.push(proyecto);
+                const saved = saveToLS();
+                if (!saved) {
+                    showToast('No se pudieron guardar los productos en LocalStorage', 'danger');
+                } else {
+                    renderProjects();
+                    this.reset();
+                    registroModal.hide();
+                    showToast('Producto guardado exitosamente!', 'success');
+                }
+            });
+        } else {
+            console.warn('projectForm element not found; submit handler not attached.');
+        }
+
+        // Botón para limpiar todos los productos
+        const clearBtn = document.getElementById('clearProjects');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                if (!confirm('¿Deseas limpiar todos los productos guardados?')) return;
+                proyectos = [];
+                saveToLS();
+                renderProjects();
+                showToast('Productos eliminados', 'warning');
+            });
+        }
+    </script>
+<button id="btnInstall" hidden>Instalar app</button>
 
 <script>
 // Registrar Service Worker
@@ -331,6 +480,5 @@ window.addEventListener('appinstalled', () => {
   if (btn) btn.hidden = true;
 });
 </script>
-
 </body>
 </html>
